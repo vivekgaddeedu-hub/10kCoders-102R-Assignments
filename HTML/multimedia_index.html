@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Assignment demonstration of HTML5 multimedia elements including images, audio, video, and iframes with anchor navigation.">
+  <title>HTML5 Multimedia &amp; Iframe Integration Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================================
+       DESIGN SYSTEM & CSS VARIABLES
+       ========================================================= */
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.75);
+      --bg-glass: rgba(15, 23, 42, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(56, 189, 248, 0.3);
+      
+      --accent-cyan: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-indigo: #6366f1;
+      --accent-emerald: #10b981;
+      
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      
+      --nav-height: 72px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+      --shadow-glow: 0 0 25px -5px rgba(56, 189, 248, 0.25);
+    }
+
+    /* =========================================================
+       BASE & RESET
+       ========================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--nav-height) + 24px);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.65;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 65%, rgba(56, 189, 248, 0.10) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* =========================================================
+       STICKY NAVIGATION BAR (ANCHOR LINKS)
+       ========================================================= */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: var(--nav-height);
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      transition: border-color 0.3s ease;
+    }
+
+    .nav-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.35rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .nav-link a {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+    }
+
+    .nav-link a:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .nav-link a:focus-visible {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    /* =========================================================
+       MAIN CONTENT CONTAINER & HERO
+       ========================================================= */
+    .main-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+    }
+
+    .hero-header {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding: 2.5rem 1rem 1rem;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--border-highlight);
+      color: var(--accent-cyan);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge-pill span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+    }
+
+    h1.hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 70%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      max-width: 720px;
+      margin: 0 auto;
+      color: var(--text-muted);
+      font-size: 1.08rem;
+      line-height: 1.7;
+    }
+
+    /* =========================================================
+       SECTION ARCHITECTURE
+       ========================================================= */
+    .media-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      margin-bottom: 3.5rem;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .media-section:hover {
+      border-color: var(--border-highlight);
+      box-shadow: var(--shadow-glow), var(--shadow-card);
+    }
+
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-tag {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.96rem;
+      margin-bottom: 1.75rem;
+      max-width: 850px;
+    }
+
+    /* =========================================================
+       1. IMAGE SECTION
+       ========================================================= */
+    .image-showcase {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .image-frame {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: #000;
+      max-height: 520px;
+    }
+
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      max-height: 520px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .image-frame:hover img {
+      transform: scale(1.025);
+    }
+
+    .image-caption {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.88rem;
+    }
+
+    .image-caption-text {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .tag-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .spec-pill {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* =========================================================
+       2. AUDIO SECTION
+       ========================================================= */
+    .audio-player-card {
+      background: linear-gradient(145deg, rgba(26, 34, 52, 0.6), rgba(15, 23, 42, 0.8));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .audio-visual-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .track-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .track-art {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
+    }
+
+    .track-meta h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .track-meta p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Audio Equalizer Simulation */
+    .equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 28px;
+    }
+
+    .eq-bar {
+      width: 4px;
+      background: var(--accent-cyan);
+      border-radius: 2px;
+      animation: bounce 1.2s ease-in-out infinite alternate;
+    }
+
+    .eq-bar:nth-child(1) { height: 40%; animation-delay: 0.1s; }
+    .eq-bar:nth-child(2) { height: 85%; animation-delay: 0.3s; }
+    .eq-bar:nth-child(3) { height: 60%; animation-delay: 0.2s; }
+    .eq-bar:nth-child(4) { height: 100%; animation-delay: 0.4s; }
+    .eq-bar:nth-child(5) { height: 50%; animation-delay: 0.15s; }
+    .eq-bar:nth-child(6) { height: 75%; animation-delay: 0.35s; }
+
+    @keyframes bounce {
+      0% { height: 20%; }
+      100% { height: 100%; }
+    }
+
+    audio {
+      width: 100%;
+      height: 48px;
+      border-radius: 30px;
+      filter: invert(0.85) hue-rotate(180deg);
+    }
+
+    /* =========================================================
+       3. VIDEO SECTION
+       ========================================================= */
+    .video-showcase {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: #000;
+      aspect-ratio: 16 / 9;
+      max-height: 540px;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* =========================================================
+       4. WEBSITE (IFRAME) SECTION
+       ========================================================= */
+    .iframe-showcase {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .iframe-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot-item {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .source-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .source-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .source-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .source-btn.active {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .iframe-container {
+      width: 100%;
+      height: 480px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: #000;
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    .site-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 3rem 1.5rem 2rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    /* =========================================================
+       RESPONSIVE ADJUSTMENTS
+       ========================================================= */
+    @media (max-width: 768px) {
+      .media-section {
+        padding: 1.5rem;
+      }
+      .nav-links {
+        gap: 0.2rem;
+        padding: 0.25rem;
+      }
+      .nav-link a {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8rem;
+      }
+      .brand span.text {
+        display: none;
+      }
+      .iframe-container {
+        height: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       1. STICKY NAVIGATION BAR WITH ANCHOR LINKS
+       ========================================================= -->
+  <header class="navbar" role="banner">
+    <div class="nav-container">
+      <a href="#top" class="brand" aria-label="Multimedia Showcase Home">
+        <div class="brand-icon">⌘</div>
+        <span class="text">MediaHub</span>
+      </a>
+
+      <!-- Anchor Links Required by Assignment -->
+      <nav aria-label="Section Navigation">
+        <ul class="nav-links">
+          <li class="nav-link"><a href="#image" id="nav-image">Image</a></li>
+          <li class="nav-link"><a href="#audio" id="nav-audio">Audio</a></li>
+          <li class="nav-link"><a href="#video" id="nav-video">Video</a></li>
+          <li class="nav-link"><a href="#website" id="nav-website">Website</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       MAIN CONTENT
+       ========================================================= -->
+  <main class="main-wrapper" id="top">
+
+    <!-- Hero Header -->
+    <header class="hero-header">
+      <div class="badge-pill">
+        <span class="dot"></span>
+        HTML5 Multimedia Integration
+      </div>
+      <h1 class="hero-title">Rich Multimedia &amp; Iframe Elements</h1>
+      <p class="hero-subtitle">
+        An interactive laboratory demonstrating the integration of high-resolution images, native HTML5 audio streams, 
+        responsive video players, and sandboxed external iframe targets.
+      </p>
+    </header>
+
+    <!-- =======================================================
+         SECTION 1: IMAGE
+         ======================================================= -->
+    <section id="image" class="media-section" aria-labelledby="image-heading">
+      <div class="section-header">
+        <div class="section-meta">
+          <span class="section-tag">01 / Graphic</span>
+          <h2 id="image-heading" class="section-title">Image Integration</h2>
+        </div>
+        <div class="tag-group">
+          <span class="spec-pill">&lt;img&gt;</span>
+          <span class="spec-pill">loading="lazy"</span>
+          <span class="spec-pill">Responsive</span>
+        </div>
+      </div>
+      <p class="section-desc">
+        Images are embedded using the modern HTML5 <code>&lt;img&gt;</code> element with descriptive <code>alt</code> text for accessibility, 
+        responsive aspect ratio controls, and lazy loading strategies to optimize core web vitals.
+      </p>
+
+      <figure class="image-showcase">
+        <div class="image-frame">
+          <img 
+            id="featured-image"
+            src="assets/hero_image.jpg" 
+            alt="Futuristic neon metropolis with glowing digital art screens, geometric polyhedrons, and illuminated transport highways" 
+            loading="lazy"
+            width="1920"
+            height="1080">
+        </div>
+        <figcaption class="image-caption">
+          <span class="image-caption-text">Futuristic Cyberpunk Metropolis (High-Resolution Graphic)</span>
+          <div class="tag-group">
+            <span class="spec-pill">Format: JPEG</span>
+            <span class="spec-pill">Aspect Ratio: 16:9</span>
+            <span class="spec-pill">Status: 200 OK</span>
+          </div>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- =======================================================
+         SECTION 2: AUDIO
+         ======================================================= -->
+    <section id="audio" class="media-section" aria-labelledby="audio-heading">
+      <div class="section-header">
+        <div class="section-meta">
+          <span class="section-tag">02 / Sound</span>
+          <h2 id="audio-heading" class="section-title">Audio Player Integration</h2>
+        </div>
+        <div class="tag-group">
+          <span class="spec-pill">&lt;audio controls&gt;</span>
+          <span class="spec-pill">&lt;source&gt; Fallback</span>
+          <span class="spec-pill">MP3 / WAV</span>
+        </div>
+      </div>
+      <p class="section-desc">
+        HTML5 introduces the native <code>&lt;audio&gt;</code> element, eliminating third-party plugins. 
+        It supports multiple nested <code>&lt;source&gt;</code> elements so the browser can negotiate the best codec (MP3 or WAV).
+      </p>
+
+      <div class="audio-player-card">
+        <div class="audio-visual-header">
+          <div class="track-info">
+            <div class="track-art" aria-hidden="true">🎵</div>
+            <div class="track-meta">
+              <h4>Modern Synthesizer &amp; Ambient FX</h4>
+              <p>Format: MPEG Audio (MP3) with WAV fallback &bull; 44.1 kHz Stereo</p>
+            </div>
+          </div>
+          <div class="equalizer" aria-hidden="true" title="Audio frequency visualization">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+          </div>
+        </div>
+
+        <!-- Embedded Audio Element with Multiple Fallbacks -->
+        <audio id="audio-player" controls preload="metadata">
+          <source src="assets/sample_audio.mp3" type="audio/mpeg">
+          <source src="assets/sample_audio.wav" type="audio/wav">
+          Your browser does not support the audio element. You can 
+          <a href="assets/sample_audio.mp3">download the audio file directly</a>.
+        </audio>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         SECTION 3: VIDEO
+         ======================================================= -->
+    <section id="video" class="media-section" aria-labelledby="video-heading">
+      <div class="section-header">
+        <div class="section-meta">
+          <span class="section-tag">03 / Motion</span>
+          <h2 id="video-heading" class="section-title">Video Player Integration</h2>
+        </div>
+        <div class="tag-group">
+          <span class="spec-pill">&lt;video controls&gt;</span>
+          <span class="spec-pill">poster=""</span>
+          <span class="spec-pill">H.264 / MP4</span>
+        </div>
+      </div>
+      <p class="section-desc">
+        The HTML5 <code>&lt;video&gt;</code> element delivers hardware-accelerated video playback. 
+        Attributes such as <code>controls</code>, <code>poster</code>, and <code>preload</code> provide full playback interaction, 
+        placeholder branding, and responsive performance.
+      </p>
+
+      <div class="video-showcase">
+        <div class="video-container">
+          <video 
+            id="video-player" 
+            controls 
+            preload="metadata" 
+            poster="assets/hero_image.jpg"
+            playsinline>
+            <source src="assets/sample_video.mp4" type="video/mp4">
+            Your browser does not support the video tag. You can 
+            <a href="assets/sample_video.mp4">download the sample video</a>.
+          </video>
+        </div>
+        <div class="image-caption">
+          <span class="image-caption-text">High-Definition Sample Clip (CC0 Public Domain)</span>
+          <div class="tag-group">
+            <span class="spec-pill">Container: MP4</span>
+            <span class="spec-pill">Codec: H.264 / AVC</span>
+            <span class="spec-pill">Playback: Native HTML5</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         SECTION 4: WEBSITE (IFRAME)
+         ======================================================= -->
+    <section id="website" class="media-section" aria-labelledby="website-heading">
+      <div class="section-header">
+        <div class="section-meta">
+          <span class="section-tag">04 / Embedding</span>
+          <h2 id="website-heading" class="section-title">Website (Iframe Integration)</h2>
+        </div>
+        <div class="tag-group">
+          <span class="spec-pill">&lt;iframe&gt;</span>
+          <span class="spec-pill">sandbox</span>
+          <span class="spec-pill">External Webpage</span>
+        </div>
+      </div>
+      <p class="section-desc">
+        The <code>&lt;iframe&gt;</code> (Inline Frame) tag embeds another HTML document directly inside the current webpage. 
+        Use the interactive source switchers below to toggle between a locally isolated HTML subpage and an external service.
+      </p>
+
+      <div class="iframe-showcase">
+        <!-- Interactive Toolbar & Source Switcher -->
+        <div class="iframe-toolbar">
+          <div class="browser-dots" aria-hidden="true">
+            <div class="dot-item dot-red"></div>
+            <div class="dot-item dot-yellow"></div>
+            <div class="dot-item dot-green"></div>
+          </div>
+          <div class="source-selector">
+            <span style="color: var(--text-dim);">Embedded Source:</span>
+            <button type="button" class="source-btn active" id="btn-local" onclick="switchIframe('local')">Local Subpage</button>
+            <button type="button" class="source-btn" id="btn-map" onclick="switchIframe('map')">OpenStreetMap</button>
+            <button type="button" class="source-btn" id="btn-wiki" onclick="switchIframe('wiki')">Wikipedia (HTML)</button>
+          </div>
+        </div>
+
+        <!-- The Iframe Element Required by Assignment -->
+        <div class="iframe-container">
+          <iframe 
+            id="embedded-frame"
+            src="embedded_page.html" 
+            title="Embedded Webpage Demonstration" 
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+            allowfullscreen>
+            <p>Your browser does not support iframes. Please view <a href="embedded_page.html">the embedded page directly</a>.</p>
+          </iframe>
+        </div>
+
+        <div class="image-caption">
+          <span class="image-caption-text" id="iframe-status-label">Currently Showing: Local Document (embedded_page.html)</span>
+          <div class="tag-group">
+            <span class="spec-pill">Target: Inline Frame</span>
+            <span class="spec-pill">Security: Sandboxed</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="site-footer" role="contentinfo">
+    <ul class="footer-links">
+      <li><a href="#image">Image</a></li>
+      <li><a href="#audio">Audio</a></li>
+      <li><a href="#video">Video</a></li>
+      <li><a href="#website">Website</a></li>
+      <li><a href="#top">&uarr; Back to Top</a></li>
+    </ul>
+    <p>&copy; 2026 10kCoders Batch 102R &bull; Multimedia &amp; Iframe Integration Assignment</p>
+  </footer>
+
+  <!-- Script for Iframe Source Switcher Demonstration -->
+  <script>
+    function switchIframe(source) {
+      const frame = document.getElementById('embedded-frame');
+      const label = document.getElementById('iframe-status-label');
+      const btnLocal = document.getElementById('btn-local');
+      const btnMap = document.getElementById('btn-map');
+      const btnWiki = document.getElementById('btn-wiki');
+
+      // Reset active button styling
+      btnLocal.classList.remove('active');
+      btnMap.classList.remove('active');
+      btnWiki.classList.remove('active');
+
+      if (source === 'local') {
+        frame.src = 'embedded_page.html';
+        label.textContent = 'Currently Showing: Local Document (embedded_page.html)';
+        btnLocal.classList.add('active');
+      } else if (source === 'map') {
+        frame.src = 'https://www.openstreetmap.org/export/embed.html?bbox=78.44,17.36,78.50,17.42&layer=mapnik';
+        label.textContent = 'Currently Showing: Live OpenStreetMap Interactive Map';
+        btnMap.classList.add('active');
+      } else if (source === 'wiki') {
+        frame.src = 'https://en.wikipedia.org/wiki/HTML';
+        label.textContent = 'Currently Showing: Wikipedia Article (HTML)';
+        btnWiki.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
