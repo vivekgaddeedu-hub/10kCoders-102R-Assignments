@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive User Registration Form with HTML5 and JavaScript client-side validation.">
+  <title>Interactive Registration Form | 10kCoders</title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       CSS VARIABLES & THEME TOKENS
+       ========================================================= */
+    :root {
+      --bg-gradient: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+                     radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                     #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-focus: rgba(99, 102, 241, 0.5);
+      
+      --accent-primary: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-cyan: #38bdf8;
+      --accent-success: #10b981;
+      --accent-error: #ef4444;
+      
+      --text-heading: #ffffff;
+      --text-body: #e2e8f0;
+      --text-muted: #94a3b8;
+      
+      --input-bg: rgba(15, 23, 42, 0.7);
+      --input-border: rgba(255, 255, 255, 0.12);
+      --input-border-active: #6366f1;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      
+      --shadow-elevation: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+      --shadow-glow: 0 0 20px -3px rgba(99, 102, 241, 0.35);
+    }
+
+    /* =========================================================
+       RESET & BASE STYLES
+       ========================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-gradient);
+      background-color: #0b0f19;
+      color: var(--text-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       CONTAINER & CARD
+       ========================================================= */
+    .form-container {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow-elevation);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-cyan));
+    }
+
+    /* Header */
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      margin-bottom: 0.75rem;
+    }
+
+    .form-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .form-subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* =========================================================
+       FORM ELEMENTS
+       ========================================================= */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-body);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .required-asterisk {
+      color: var(--accent-error);
+      margin-left: 2px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"] {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: #ffffff;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--input-border-active);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    input::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* Invalid input styling */
+    .has-error input {
+      border-color: var(--accent-error) !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+    }
+
+    /* Valid input styling */
+    .has-success input {
+      border-color: var(--accent-success) !important;
+    }
+
+    .error-msg {
+      font-size: 0.78rem;
+      color: var(--accent-error);
+      display: none;
+      margin-top: 0.2rem;
+      font-weight: 500;
+    }
+
+    .has-error .error-msg {
+      display: block;
+    }
+
+    /* Checkbox styling */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      accent-color: var(--accent-primary);
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .checkbox-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       SUBMIT BUTTON
+       ========================================================= */
+    .submit-btn {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      color: #ffffff;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: all 0.25s ease;
+      box-shadow: var(--shadow-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px -2px rgba(56, 189, 248, 0.5);
+      filter: brightness(1.08);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Footer Note */
+    .form-footer-note {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 540px) {
+      .form-container {
+        padding: 2rem 1.25rem;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="form-container" role="main">
+    <header class="form-header">
+      <span class="brand-tag">
+        <span>●</span> 10kCoders &bull; HTML Assignment
+      </span>
+      <h1 class="form-title">Create Account</h1>
+      <p class="form-subtitle">Join our developer network by completing the registration below.</p>
+    </header>
+
+    <!-- 
+      Registration Form
+      Wrapped in standard <form> with dummy action endpoint
+    -->
+    <form id="registrationForm" action="https://httpbin.org/post" method="POST" novalidate>
+
+      <!-- 1. Full Name (Text Input) -->
+      <div class="form-group" id="group-fullname">
+        <label for="fullname">
+          Full Name <span class="required-asterisk">*</span>
+        </label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="fullname" 
+            name="fullname" 
+            placeholder="e.g., Sudheer Gadde"
+            autocomplete="name"
+            required>
+        </div>
+        <span class="error-msg" id="error-fullname">Please enter your full name.</span>
+      </div>
+
+      <!-- 2. Email Address (Email Input) -->
+      <div class="form-group" id="group-email">
+        <label for="email">
+          Email Address <span class="required-asterisk">*</span>
+        </label>
+        <div class="input-wrapper">
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="e.g., name@example.com"
+            autocomplete="email"
+            required>
+        </div>
+        <span class="error-msg" id="error-email">Please enter a valid email address (e.g., name@domain.com).</span>
+      </div>
+
+      <!-- 3 & 4. Password and Confirm Password (Password Inputs) -->
+      <div class="form-row">
+        <!-- Password -->
+        <div class="form-group" id="group-password">
+          <label for="password">
+            Password <span class="required-asterisk">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required>
+          </div>
+          <span class="error-msg" id="error-password">Password must be at least 6 characters.</span>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group" id="group-confirm-password">
+          <label for="confirm_password">
+            Confirm Password <span class="required-asterisk">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              id="confirm_password" 
+              name="confirm_password" 
+              placeholder="••••••••"
+              autocomplete="new-password"
+              required>
+          </div>
+          <span class="error-msg" id="error-confirm-password">Passwords do not match.</span>
+        </div>
+      </div>
+
+      <!-- 5. Age (Number Input between 18 and 100) -->
+      <div class="form-group" id="group-age">
+        <label for="age">
+          Age <span class="required-asterisk">* (18 – 100)</span>
+        </label>
+        <div class="input-wrapper">
+          <input 
+            type="number" 
+            id="age" 
+            name="age" 
+            min="18" 
+            max="100" 
+            placeholder="Enter age (18 - 100)"
+            required>
+        </div>
+        <span class="error-msg" id="error-age">Age must be a valid number between 18 and 100.</span>
+      </div>
+
+      <!-- 6. Newsletter Subscription (Checkbox) -->
+      <div class="checkbox-group">
+        <input 
+          type="checkbox" 
+          id="newsletter" 
+          name="newsletter" 
+          value="yes"
+          checked>
+        <label for="newsletter" class="checkbox-label">
+          Subscribe to our weekly developer newsletter for industry updates and tutorials.
+        </label>
+      </div>
+
+      <!-- 7. Submit Button -->
+      <button type="submit" class="submit-btn" id="submit-btn">
+        Register Now &rarr;
+      </button>
+
+    </form>
+
+    <p class="form-footer-note">
+      Already have an account? <a href="#" style="color: var(--accent-cyan); text-decoration: none;">Sign in here</a>.
+    </p>
+  </main>
+
+  <!-- =========================================================
+       JAVASCRIPT FORM VALIDATION & SUCCESS ALERT
+       ========================================================= -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("registrationForm");
+      const fullNameInput = document.getElementById("fullname");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const confirmPasswordInput = document.getElementById("confirm_password");
+      const ageInput = document.getElementById("age");
+      const newsletterCheckbox = document.getElementById("newsletter");
+
+      // Email regex for standard RFC 5322 validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      // Helper function to show error
+      function showError(groupId, message) {
+        const group = document.getElementById(groupId);
+        group.classList.remove("has-success");
+        group.classList.add("has-error");
+        if (message) {
+          const errorSpan = group.querySelector(".error-msg");
+          if (errorSpan) errorSpan.textContent = message;
+        }
+      }
+
+      // Helper function to clear error / set success
+      function showSuccess(groupId) {
+        const group = document.getElementById(groupId);
+        group.classList.remove("has-error");
+        group.classList.add("has-success");
+      }
+
+      // Individual field validation functions
+      function validateFullName() {
+        const value = fullNameInput.value.trim();
+        if (value === "") {
+          showError("group-fullname", "Full name is required and cannot be empty.");
+          return false;
+        } else if (value.length < 2) {
+          showError("group-fullname", "Full name must be at least 2 characters.");
+          return false;
+        } else {
+          showSuccess("group-fullname");
+          return true;
+        }
+      }
+
+      function validateEmail() {
+        const value = emailInput.value.trim();
+        if (value === "") {
+          showError("group-email", "Email address is required.");
+          return false;
+        } else if (!emailRegex.test(value)) {
+          showError("group-email", "Please enter a valid email format (e.g., user@example.com).");
+          return false;
+        } else {
+          showSuccess("group-email");
+          return true;
+        }
+      }
+
+      function validatePassword() {
+        const value = passwordInput.value;
+        if (value === "") {
+          showError("group-password", "Password is required.");
+          return false;
+        } else if (value.length < 6) {
+          showError("group-password", "Password must be at least 6 characters long.");
+          return false;
+        } else {
+          showSuccess("group-password");
+          // Re-validate confirm password if it already has value
+          if (confirmPasswordInput.value) validateConfirmPassword();
+          return true;
+        }
+      }
+
+      function validateConfirmPassword() {
+        const pwd = passwordInput.value;
+        const confirmPwd = confirmPasswordInput.value;
+        if (confirmPwd === "") {
+          showError("group-confirm-password", "Please confirm your password.");
+          return false;
+        } else if (pwd !== confirmPwd) {
+          showError("group-confirm-password", "Passwords do not match. Please re-enter.");
+          return false;
+        } else {
+          showSuccess("group-confirm-password");
+          return true;
+        }
+      }
+
+      function validateAge() {
+        const value = ageInput.value.trim();
+        const num = Number(value);
+        if (value === "") {
+          showError("group-age", "Age is required.");
+          return false;
+        } else if (isNaN(num) || !Number.isInteger(num)) {
+          showError("group-age", "Age must be a whole number.");
+          return false;
+        } else if (num < 18 || num > 100) {
+          showError("group-age", "Age must be between 18 and 100 years.");
+          return false;
+        } else {
+          showSuccess("group-age");
+          return true;
+        }
+      }
+
+      // Real-time input event listeners for smooth user feedback
+      fullNameInput.addEventListener("input", validateFullName);
+      emailInput.addEventListener("input", validateEmail);
+      passwordInput.addEventListener("input", validatePassword);
+      confirmPasswordInput.addEventListener("input", validateConfirmPassword);
+      ageInput.addEventListener("input", validateAge);
+
+      // Form submission handler
+      form.addEventListener("submit", function (event) {
+        // Prevent default submission to perform JavaScript validation
+        event.preventDefault();
+
+        // Run all validations
+        const isNameValid = validateFullName();
+        const isEmailValid = validateEmail();
+        const isPasswordValid = validatePassword();
+        const isConfirmPasswordValid = validateConfirmPassword();
+        const isAgeValid = validateAge();
+
+        // Check if all validations passed
+        if (isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isAgeValid) {
+          const userName = fullNameInput.value.trim();
+          const userEmail = emailInput.value.trim();
+          const userAge = ageInput.value.trim();
+          const isSubscribed = newsletterCheckbox.checked ? "Subscribed" : "Not Subscribed";
+
+          // Alert required by assignment specifications
+          alert(
+            "🎉 Registration Successful!\n\n" +
+            "Summary of Submitted Details:\n" +
+            "• Full Name: " + userName + "\n" +
+            "• Email: " + userEmail + "\n" +
+            "• Age: " + userAge + "\n" +
+            "• Newsletter: " + isSubscribed + "\n\n" +
+            "Welcome aboard to 10kCoders!"
+          );
+
+          // Reset form fields after successful submission
+          form.reset();
+          document.querySelectorAll(".form-group").forEach(function (group) {
+            group.classList.remove("has-success", "has-error");
+          });
+        } else {
+          // Focus first invalid element
+          const firstError = document.querySelector(".has-error input");
+          if (firstError) firstError.focus();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
