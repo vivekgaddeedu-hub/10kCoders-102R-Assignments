@@ -2,9 +2,9 @@
 
 - **Course / Batch:** 10kCoders - 102R
 - **Assignment Title:** Iframe and Multimedia Integration Assignment
-- **Primary File:** [`multimedia_index.html`](file:///Users/sudheergadde/Desktop/10kCoders-102R-Assignments/HTML/multimedia_index.html)
-- **Embedded Document:** [`embedded_page.html`](file:///Users/sudheergadde/Desktop/10kCoders-102R-Assignments/HTML/embedded_page.html)
-- **Assets Directory:** [`HTML/assets/`](file:///Users/sudheergadde/Desktop/10kCoders-102R-Assignments/HTML/assets)
+- **Primary File:** [`multimedia_index.html`](file:///Users/sudheergadde/Desktop/10kCoders-102R-Assignments/HTML/assig1/multimedia_index.html)
+- **Embedded Document:** [`embedded_page.html`](file:///Users/sudheergadde/Desktop/10kCoders-102R-Assignments/HTML/assig1/embedded_page.html)
+- **Assets Directory:** [`HTML/assig1/assets/`](file:///Users/sudheergadde/Desktop/10kCoders-102R-Assignments/HTML/assig1/assets)
 
 ---
 
@@ -25,14 +25,15 @@ The objective of this assignment is to demonstrate practical mastery of HTML5 mu
 ```
 10kCoders-102R-Assignments/
 └── HTML/
-    ├── multimedia_index.html           # Main assignment webpage
-    ├── embedded_page.html              # Target webpage loaded inside the <iframe>
-    ├── multimedia_assignment_report.md # Documentation & challenge analysis
-    └── assets/
-        ├── hero_image.jpg              # High-resolution JPEG graphic (16:9)
-        ├── sample_audio.mp3            # MPEG Layer-3 audio clip
-        ├── sample_audio.wav            # 16-bit PCM WAV audio clip fallback
-        └── sample_video.mp4            # H.264 / AVC video clip
+    └── assig1/
+        ├── multimedia_index.html           # Main assignment webpage
+        ├── embedded_page.html              # Target webpage loaded inside the <iframe>
+        ├── multimedia_assignment_report.md # Documentation & challenge analysis
+        └── assets/
+            ├── hero_image.jpg              # High-resolution JPEG graphic (16:9)
+            ├── sample_audio.mp3            # MPEG Layer-3 audio clip
+            ├── sample_audio.wav            # 16-bit PCM WAV audio clip fallback
+            └── sample_video.mp4            # H.264 / AVC video clip
 ```
 
 ---
