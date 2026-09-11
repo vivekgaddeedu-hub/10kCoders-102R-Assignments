@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Git Continuation Assignment: Step-by-step interactive guide on cloning, initializing, linking, and synchronizing repositories with GitHub.">
+  <title>Git Continuation &amp; GitHub Version Control | 10kCoders</title>
+
+  <!-- Typography: Inter, Outfit, and JetBrains Mono for Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       DESIGN SYSTEM & CSS TOKENS
+       ========================================================= */
+    :root {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #101522;
+      --bg-card: rgba(16, 21, 34, 0.78);
+      --bg-terminal: #07090e;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.3);
+      
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-git: #f05032;
+      
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      
+      --shadow-elevation: 0 15px 35px -10px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+      --shadow-glow: 0 0 25px -5px rgba(240, 80, 50, 0.25);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.65;
+      background-image:
+        radial-gradient(circle at 10% 15%, rgba(240, 80, 50, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 65%, rgba(99, 102, 241, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 95%, rgba(56, 189, 248, 0.06) 0%, transparent 50%);
+      background-attachment: fixed;
+      padding-bottom: 5rem;
+    }
+
+    /* =========================================================
+       HEADER & HERO
+       ========================================================= */
+    .hero-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(240, 80, 50, 0.12);
+      border: 1px solid rgba(240, 80, 50, 0.35);
+      color: #ff6b4a;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .badge-pill span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f05032;
+      box-shadow: 0 0 8px #f05032;
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 70%, #ff8a65 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      max-width: 750px;
+      margin: 0 auto;
+      color: var(--text-muted);
+      font-size: 1.08rem;
+    }
+
+    /* =========================================================
+       CONTAINER & GRID
+       ========================================================= */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Git Architecture Visual Pipeline */
+    .git-pipeline {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 3.5rem;
+      box-shadow: var(--shadow-elevation);
+      backdrop-filter: blur(14px);
+    }
+
+    .pipeline-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      position: relative;
+    }
+
+    .pipeline-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .pipeline-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+
+    .step-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      color: #ffffff;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* =========================================================
+       TASK MODULE CARDS
+       ========================================================= */
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-elevation);
+      backdrop-filter: blur(14px);
+      transition: border-color 0.3s ease;
+    }
+
+    .task-card:hover {
+      border-color: rgba(240, 80, 50, 0.3);
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .task-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .task-badge {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent-git), #e63946);
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .task-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      color: #ffffff;
+    }
+
+    .task-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Terminal Window Component */
+    .terminal-window {
+      background: var(--bg-terminal);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin: 1.25rem 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .terminal-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot-close { background: #ef4444; }
+    .dot-min { background: #f59e0b; }
+    .dot-max { background: #10b981; }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .terminal-body {
+      padding: 1.25rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+
+    .prompt-line {
+      display: flex;
+      gap: 0.75rem;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .prompt-symbol {
+      color: var(--accent-emerald);
+      user-select: none;
+    }
+
+    .cmd-text {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    .output-text {
+      color: var(--text-dim);
+      margin-left: 1.25rem;
+      margin-bottom: 0.85rem;
+      white-space: pre-wrap;
+    }
+
+    .success-text {
+      color: var(--accent-emerald);
+    }
+
+    /* Explanation list */
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .check-icon {
+      color: var(--accent-emerald);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       INTERACTIVE COMMAND DEMO SIMULATOR
+       ========================================================= */
+    .demo-box {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .demo-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      color: #ffffff;
+    }
+
+    .sim-button-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sim-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .sim-btn:hover {
+      background: var(--accent-indigo);
+      color: #fff;
+      border-color: var(--accent-indigo);
+    }
+
+    .sim-output {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      color: #a5b4fc;
+      min-height: 70px;
+      white-space: pre-wrap;
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO SECTION -->
+  <header class="hero-wrapper">
+    <div class="badge-pill">
+      <span class="dot"></span>
+      Git &amp; GitHub Version Control Assignment
+    </div>
+    <h1 class="hero-title">Git Continuation &amp; Collaboration</h1>
+    <p class="hero-subtitle">
+      A comprehensive guide and demonstration covering cloning remote repositories, initializing local projects, 
+      linking remote GitHub origins, staging, committing, and verifying synchronization.
+    </p>
+  </header>
+
+  <main class="container">
+
+    <!-- ARCHITECTURE PIPELINE OVERVIEW -->
+    <section class="git-pipeline" aria-labelledby="pipeline-heading">
+      <h2 id="pipeline-heading" class="pipeline-title">
+        <span>🔄</span> The 4 Areas of Git Architecture
+      </h2>
+      <div class="pipeline-steps">
+        <div class="pipeline-card">
+          <div class="step-number">Area 1</div>
+          <h3 class="card-heading">Working Directory</h3>
+          <p class="card-desc">Your local sandbox containing untracked or modified project files on disk.</p>
+        </div>
+        <div class="pipeline-card">
+          <div class="step-number">Area 2</div>
+          <h3 class="card-heading">Staging Area (Index)</h3>
+          <p class="card-desc">Files prepped for the next snapshot via <code>git add &lt;file&gt;</code>.</p>
+        </div>
+        <div class="pipeline-card">
+          <div class="step-number">Area 3</div>
+          <h3 class="card-heading">Local Repository (.git)</h3>
+          <p class="card-desc">Permanent snapshots recorded in your local commit history via <code>git commit</code>.</p>
+        </div>
+        <div class="pipeline-card">
+          <div class="step-number">Area 4</div>
+          <h3 class="card-heading">Remote Repository (GitHub)</h3>
+          <p class="card-desc">Hosted cloud repository synchronized via <code>git push</code> &amp; <code>git pull</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TASK 1: CLONE REPOSITORY -->
+    <section class="task-card" id="task-clone" aria-labelledby="task1-heading">
+      <div class="task-header">
+        <div class="task-title-group">
+          <span class="task-badge">Task 1</span>
+          <h2 id="task1-heading" class="task-title">Clone an Existing GitHub Repository</h2>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--accent-cyan);"><code>git clone</code></span>
+      </div>
+      <p class="task-desc">
+        Cloning copies an entire remote Git repository—including its commit history, branches, and tracked files—down to your local machine.
+      </p>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-close"></span>
+            <span class="terminal-dot dot-min"></span>
+            <span class="terminal-dot dot-max"></span>
+          </div>
+          <span class="terminal-title">zsh &bull; terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git clone https://github.com/vivekgaddeedu-hub/10kCoders-102R-Assignments.git</span>
+          </div>
+          <div class="output-text">Cloning into '10kCoders-102R-Assignments'...
+remote: Enumerating objects: 42, done.
+remote: Counting objects: 100% (42/42), done.
+remote: Compressing objects: 100% (35/35), done.
+remote: Total 42 (delta 8), reused 40 (delta 6), pack-reused 0
+Receiving objects: 100% (42/42), 2.85 MiB | 4.12 MiB/s, done.
+Resolving deltas: 100% (8/8), done.</div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">cd 10kCoders-102R-Assignments &amp;&amp; git branch</span>
+          </div>
+          <div class="output-text success-text">* main</div>
+        </div>
+      </div>
+
+      <ul class="checklist">
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span>Creates a dedicated directory containing the complete project and its hidden <code>.git</code> database.</span>
+        </li>
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span>Automatically sets up the default remote alias named <strong><code>origin</code></strong> pointing to the GitHub repository URL.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- TASK 2: INITIALIZE LOCAL REPOSITORY -->
+    <section class="task-card" id="task-init" aria-labelledby="task2-heading">
+      <div class="task-header">
+        <div class="task-title-group">
+          <span class="task-badge">Task 2</span>
+          <h2 id="task2-heading" class="task-title">Create and Initialize a New Local Repository</h2>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--accent-cyan);"><code>git init</code></span>
+      </div>
+      <p class="task-desc">
+        To start version control on a brand-new or existing folder on your local system, initialize it with <code>git init</code>.
+      </p>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-close"></span>
+            <span class="terminal-dot dot-min"></span>
+            <span class="terminal-dot dot-max"></span>
+          </div>
+          <span class="terminal-title">zsh &bull; terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">mkdir my-collab-project &amp;&amp; cd my-collab-project</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git init</span>
+          </div>
+          <div class="output-text success-text">Initialized empty Git repository in /Users/sudheergadde/my-collab-project/.git/</div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git branch -M main</span>
+          </div>
+          <div class="output-text">Branch renamed to 'main' as modern standard.</div>
+        </div>
+      </div>
+
+      <ul class="checklist">
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span>Generates the hidden <code>.git</code> folder to track commits, branches, and staging states.</span>
+        </li>
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span>Renaming the initial branch to <code>main</code> aligns with modern GitHub defaults.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- TASK 3: LINK TO GITHUB REMOTE -->
+    <section class="task-card" id="task-remote" aria-labelledby="task3-heading">
+      <div class="task-header">
+        <div class="task-title-group">
+          <span class="task-badge">Task 3</span>
+          <h2 id="task3-heading" class="task-title">Link Local Repository to a GitHub Remote</h2>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--accent-cyan);"><code>git remote add origin</code></span>
+      </div>
+      <p class="task-desc">
+        Connect your standalone local repository with an empty repository created on GitHub using the <code>git remote add</code> command.
+      </p>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-close"></span>
+            <span class="terminal-dot dot-min"></span>
+            <span class="terminal-dot dot-max"></span>
+          </div>
+          <span class="terminal-title">zsh &bull; terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git remote add origin https://github.com/username/my-collab-project.git</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git remote -v</span>
+          </div>
+          <div class="output-text">origin  https://github.com/username/my-collab-project.git (fetch)
+origin  https://github.com/username/my-collab-project.git (push)</div>
+        </div>
+      </div>
+
+      <ul class="checklist">
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span><strong><code>origin</code></strong> is the conventional shorthand name given to the primary upstream server.</span>
+        </li>
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span><code>git remote -v</code> confirms the fetch and push target URLs are properly configured.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- TASK 4: BASIC LIFECYCLE (ADD, COMMIT, PUSH) -->
+    <section class="task-card" id="task-lifecycle" aria-labelledby="task4-heading">
+      <div class="task-header">
+        <div class="task-title-group">
+          <span class="task-badge">Task 4</span>
+          <h2 id="task4-heading" class="task-title">Add, Commit, and Push Changes</h2>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--accent-cyan);"><code>add &bull; commit &bull; push</code></span>
+      </div>
+      <p class="task-desc">
+        Perform the fundamental snapshot lifecycle: stage tracked files, record a commit message, and transmit commits to the GitHub cloud.
+      </p>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-close"></span>
+            <span class="terminal-dot dot-min"></span>
+            <span class="terminal-dot dot-max"></span>
+          </div>
+          <span class="terminal-title">zsh &bull; terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">echo "# Collaboration Project" &gt; README.md</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git add .</span>
+          </div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git commit -m "feat: initial commit with project documentation"</span>
+          </div>
+          <div class="output-text">[main (root-commit) 7a8bc91] feat: initial commit with project documentation
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md</div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git push -u origin main</span>
+          </div>
+          <div class="output-text success-text">Enumerating objects: 3, done.
+Counting objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 280 bytes | 280.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://github.com/username/my-collab-project.git
+ * [new branch]      main -&gt; main
+branch 'main' set up to track 'origin/main'.</div>
+        </div>
+      </div>
+
+      <ul class="checklist">
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span><code>git add .</code> stages all modifications and new files.</span>
+        </li>
+        <li class="checklist-item">
+          <span class="check-icon">✓</span>
+          <span><code>-u</code> flag (upstream) binds your local branch with the remote branch for effortless future <code>git push</code> commands.</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- TASK 5: VERIFICATION & AUDITING -->
+    <section class="task-card" id="task-verify" aria-labelledby="task5-heading">
+      <div class="task-header">
+        <div class="task-title-group">
+          <span class="task-badge">Task 5</span>
+          <h2 id="task5-heading" class="task-title">Verify Changes Locally and on GitHub</h2>
+        </div>
+        <span style="font-size: 0.85rem; color: var(--accent-cyan);"><code>status &bull; log</code></span>
+      </div>
+      <p class="task-desc">
+        Verify that working trees are completely clean, commit histories match, and remotes reflect the latest revisions.
+      </p>
+
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-close"></span>
+            <span class="terminal-dot dot-min"></span>
+            <span class="terminal-dot dot-max"></span>
+          </div>
+          <span class="terminal-title">zsh &bull; terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git status</span>
+          </div>
+          <div class="output-text success-text">On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean</div>
+          <div class="prompt-line">
+            <span class="prompt-symbol">&gt;</span>
+            <span class="cmd-text">git log --oneline -n 3</span>
+          </div>
+          <div class="output-text">82e4cf5 (HEAD -&gt; main, origin/main) Add Python conditional statements practice
+e35df42 Add HTML Assignment 2: Interactive Registration Form
+f3715a3 Add Python Data Types Comprehensive Assignment</div>
+        </div>
+      </div>
+
+      <!-- Interactive Command Output Simulator -->
+      <div class="demo-box">
+        <div class="demo-header">
+          <span class="demo-title">Interactive Command Inspector</span>
+          <div class="sim-button-group">
+            <button class="sim-btn" onclick="showSim('status')">git status</button>
+            <button class="sim-btn" onclick="showSim('remote')">git remote -v</button>
+            <button class="sim-btn" onclick="showSim('log')">git log --oneline</button>
+            <button class="sim-btn" onclick="showSim('branch')">git branch -a</button>
+          </div>
+        </div>
+        <div class="sim-output" id="simulator-screen">$ Click a command button above to inspect its real output...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>&copy; 2026 10kCoders Batch 102R &bull; Git Continuation &amp; Collaboration Assignment</p>
+  </footer>
+
+  <script>
+    const outputs = {
+      status: `On branch main\nYour branch is up to date with 'origin/main'.\n\nnothing to commit, working tree clean`,
+      remote: `origin  https://github.com/vivekgaddeedu-hub/10kCoders-102R-Assignments.git (fetch)\norigin  https://github.com/vivekgaddeedu-hub/10kCoders-102R-Assignments.git (push)`,
+      log: `82e4cf5 (HEAD -> main, origin/main) Add Python conditional statements practice\ne35df42 Add HTML Assignment 2: Interactive Registration Form\nf3715a3 Add Python Data Types Comprehensive Assignment\n1aa3830 Add Dictionary CRUD operations assignment\ne76bb4c Organize HTML multimedia assignment files into assig1 directory`,
+      branch: `* main\n  remotes/origin/HEAD -> origin/main\n  remotes/origin/main`
+    };
+
+    function showSim(cmd) {
+      const screen = document.getElementById("simulator-screen");
+      screen.textContent = `$ git ${cmd}\n\n` + outputs[cmd];
+    }
+  </script>
+</body>
+</html>
